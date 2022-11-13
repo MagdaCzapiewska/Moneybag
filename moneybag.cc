@@ -7,7 +7,10 @@ Moneybag::Moneybag(coin_number_t ll, coin_number_t ss, coin_number_t dd) : l(ll)
 
 Moneybag::Moneybag(const Moneybag& moneybag) {
     std::cout << moneybag.livre_number() << " " << moneybag.solidus_number() << " " << moneybag.denier_number() << "\n";
-    Moneybag(moneybag.livre_number(), moneybag.solidus_number(), moneybag.denier_number());
+    //Moneybag(moneybag.livre_number(), moneybag.solidus_number(), moneybag.denier_number());
+    l = moneybag.livre_number();
+    s = moneybag.solidus_number();
+    d = moneybag.denier_number();
 }
 
 Moneybag::coin_number_t Moneybag::livre_number() const {
