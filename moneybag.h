@@ -30,7 +30,7 @@ public:
     //2 solidy i 3 denary; nie powinno być natomiast możliwości utworzenia
     //obiektu bez podania liczby monet;
 
-    constexpr Moneybag(coin_number_t dd, coin_number_t ss, coin_number_t ll);
+    explicit constexpr Moneybag(coin_number_t dd, coin_number_t ss, coin_number_t ll);
 
     Moneybag(const Moneybag& moneybag);
 
@@ -40,9 +40,9 @@ public:
 
     // Odczytanie liczby poszczególnych monet za pomocą odpowiednio metod
     //livre_number(), solidus_number() i denier_number();
-    coin_number_t livre_number() const;
-    coin_number_t solidus_number() const;
-    coin_number_t denier_number() const;
+    constexpr coin_number_t livre_number() const;
+    constexpr coin_number_t solidus_number() const;
+    constexpr coin_number_t denier_number() const;
 
 
     // Wykonywanie operacji dodawania, odejmowania zawartości sakiewek oraz
@@ -69,21 +69,6 @@ public:
     // ==
     bool operator==(const Moneybag &rhs) const;
 
-    // !=
-    bool operator!=(const Moneybag &rhs) const;
-
-    // <
-    bool operator<(const Moneybag &rhs) const;
-
-    // <=
-    bool operator<=(const Moneybag &rhs) const;
-
-    // >
-    bool operator>(const Moneybag &rhs) const;
-
-    // >=
-    bool operator>=(const Moneybag &rhs) const;
-
     // <=>
     std::partial_ordering operator<=>(const Moneybag &rhs);
 
@@ -95,7 +80,7 @@ public:
 
     // Rzutowanie sakiewki na typ bool, informujące, czy sakiewka jest niepusta
     //(zawiera choć jedną monetę).
-    operator bool() const;
+    explicit operator bool() const;
 };
 
 // *
@@ -105,22 +90,22 @@ class Value {
 
 private:
 
-    __int128 val;
+    __uint128_t val;
 
     //utworzenie wartości na podstawie sakiewki lub liczby całkowitej
     //nieujemnej;
 public:
-    Value(const Moneybag& moneybag);
+    explicit Value(const Moneybag& moneybag);
 
-    Value(Moneybag::coin_number_t val);
+    explicit Value(Moneybag::coin_number_t val);
 
-    Value();
+    explicit Value();
 
-    Value(const Value& value);
+    explicit Value(const Value& value);
 
     Value& operator=(const Value &rhs);
 
-    __int128 get_value() const;
+    constexpr __uint128_t get_value() const;
 
     //kopiowanie wartości;
 
@@ -130,29 +115,20 @@ public:
     // ==
     bool operator==(const Value &rhs) const;
 
-    // !=
-    bool operator!=(const Value &rhs) const;
+    // <=>
+    std::strong_ordering operator<=>(const Value &rhs) const;
 
-    // <
-    bool operator<(const Value &rhs) const;
-
-    // <=
-    bool operator<=(const Value &rhs) const;
-
-    // >
-    bool operator>(const Value &rhs) const;
-
-    // >=
-    bool operator>=(const Value &rhs) const;
+    // ==
+    bool operator==(const uint64_t rhs) const;
 
     // <=>
-    std::strong_ordering operator<=>(const Value &rhs);
+    std::strong_ordering operator<=>(const uint64_t rhs) const;
 
     //porównywanie wartości z liczbami całkowitymi nieujemnymi;
 
     //rzutowanie wartości na obiekt klasy string reprezentujący wartość
     //w zapisie dziesiętnym.
-    operator std::string() const;
+    explicit operator std::string() const;
 };
 
 #endif // __MONEYBAG_H__

@@ -8,24 +8,22 @@
 constexpr Moneybag::Moneybag(coin_number_t ll, coin_number_t ss, coin_number_t dd) : l(ll), s(ss), d(dd) {}
 
 Moneybag::Moneybag(const Moneybag& moneybag) {
-    std::cout << moneybag.livre_number() << " " << moneybag.solidus_number() << " " << moneybag.denier_number() << "\n";
-    //Moneybag(moneybag.livre_number(), moneybag.solidus_number(), moneybag.denier_number());
     l = moneybag.livre_number();
     s = moneybag.solidus_number();
     d = moneybag.denier_number();
 }
 
 Value::Value(const Moneybag& moneybag) {
-    __int128 result = 0;
-    result += ((__int128)240 * moneybag.livre_number());
-    result += ((__int128)12 * moneybag.solidus_number());
+    __uint128_t result = 0;
+    result += ((__uint128_t)240 * moneybag.livre_number());
+    result += ((__uint128_t)12 * moneybag.solidus_number());
     result += moneybag.denier_number();
 
     this->val = result;
 }
 
 Value::Value(Moneybag::coin_number_t val) {
-    this->val = (__int128)val;
+    this->val = (__uint128_t)val;
 }
 
 Value::Value(const Value& value) {
@@ -53,19 +51,19 @@ Value& Value::operator=(const Value &rhs) {
     return *this;
 }
 
-Moneybag::coin_number_t Moneybag::livre_number() const {
+constexpr Moneybag::coin_number_t Moneybag::livre_number() const {
     return this->l;
 }
 
-Moneybag::coin_number_t Moneybag::solidus_number() const {
+constexpr Moneybag::coin_number_t Moneybag::solidus_number() const {
     return this->s;
 }
 
-Moneybag::coin_number_t Moneybag::denier_number() const {
+constexpr Moneybag::coin_number_t Moneybag::denier_number() const {
     return this->d;
 }
 
-__int128 Value::get_value() const {
+constexpr __uint128_t Value::get_value() const {
     return this->val;
 }
 
@@ -73,7 +71,7 @@ std::ostream& operator<< (std::ostream &strm, const Moneybag& rhs) {
 
     strm << "(" << rhs.livre_number() << (rhs.livre_number() == 1 ? " livre, " : " livres, ") <<
     rhs.solidus_number() << (rhs.solidus_number() == 1 ? " solidus, " : " soliduses, ") <<
-    rhs.denier_number() << (rhs.denier_number() == 1 ? " denier" : " deniers") << ")\n";
+    rhs.denier_number() << (rhs.denier_number() == 1 ? " denier" : " deniers") << ")";
 
     return strm;
 }
@@ -195,64 +193,21 @@ bool Moneybag::operator==(const Moneybag &rhs) const {
     }
 }
 
-bool Moneybag::operator!=(const Moneybag &rhs) const {
-    return !(this->operator==(rhs));
-}
-
-
-bool Moneybag::operator<(const Moneybag &rhs) const {
-    if (this->livre_number() < rhs.livre_number()
-    && this->solidus_number() < rhs.solidus_number()
-    && this->denier_number() < rhs.denier_number()) {
-        return true;
+std::partial_ordering Moneybag::operator<=>(const Moneybag &rhs) {
+    if (this->livre_number() == rhs.livre_number()
+             && this->solidus_number() == rhs.solidus_number()
+             && this->denier_number() == rhs.denier_number()) {
+        return std::partial_ordering::equivalent;
     }
-    else {
-        return false;
-    }
-}
-
-bool Moneybag::operator<=(const Moneybag &rhs) const {
-    if (this->livre_number() <= rhs.livre_number()
+    else if (this->livre_number() <= rhs.livre_number()
         && this->solidus_number() <= rhs.solidus_number()
         && this->denier_number() <= rhs.denier_number()) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-bool Moneybag::operator>(const Moneybag &rhs) const {
-    if (this->livre_number() > rhs.livre_number()
-        && this->solidus_number() > rhs.solidus_number()
-        && this->denier_number() > rhs.denier_number()) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-bool Moneybag::operator>=(const Moneybag &rhs) const {
-    if (this->livre_number() >= rhs.livre_number()
-        && this->solidus_number() >= rhs.solidus_number()
-        && this->denier_number() >= rhs.denier_number()) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-std::partial_ordering Moneybag::operator<=>(const Moneybag &rhs) {
-    if (*this < rhs) {
         return std::partial_ordering::less;
     }
-    else if (*this > rhs) {
+    else if (this->livre_number() >= rhs.livre_number()
+             && this->solidus_number() >= rhs.solidus_number()
+             && this->denier_number() >= rhs.denier_number()) {
         return std::partial_ordering::greater;
-    }
-    else if (*this == rhs) {
-        return std::partial_ordering::equivalent;
     }
     else {
         return std::partial_ordering::unordered;
@@ -263,32 +218,11 @@ bool Value::operator==(const Value &rhs) const {
     return (this->val == rhs.get_value());
 }
 
-bool Value::operator!=(const Value &rhs) const {
-    return !(*this == rhs);
-}
-
-bool Value::operator<(const Value &rhs) const {
-    return (this->val < rhs.get_value());
-}
-
-
-bool Value::operator<=(const Value &rhs) const {
-    return (*this == rhs || *this < rhs);
-}
-
-bool Value::operator>(const Value &rhs) const {
-    return (this->val > rhs.get_value());
-}
-
-bool Value::operator>=(const Value &rhs) const {
-    return (*this == rhs || *this > rhs);
-}
-
-std::strong_ordering Value::operator<=>(const Value &rhs) {
-    if (*this < rhs) {
+std::strong_ordering Value::operator<=>(const Value &rhs) const {
+    if (this->get_value() < rhs.get_value()) {
         return std::strong_ordering::less;
     }
-    else if (*this > rhs) {
+    else if (this->get_value() > rhs.get_value()) {
         return std::strong_ordering::greater;
     }
     else {
@@ -296,9 +230,27 @@ std::strong_ordering Value::operator<=>(const Value &rhs) {
     }
 }
 
-constinit Moneybag Livre = Moneybag(1, 0, 0);
-constinit Moneybag Solidus = Moneybag(0, 1, 0);
-constinit Moneybag Denier = Moneybag(0, 0, 1);
+// ==
+bool Value::operator==(const uint64_t rhs) const {
+    return (this->val == rhs);
+}
+
+// <=>
+std::strong_ordering Value::operator<=>(const uint64_t rhs) const {
+    if (this->get_value() < rhs) {
+        return std::strong_ordering::less;
+    }
+    else if (this->get_value() > rhs) {
+        return std::strong_ordering::greater;
+    }
+    else {
+        return std::strong_ordering::equal;
+    }
+}
+
+constinit const Moneybag Livre = Moneybag(1, 0, 0);
+constinit const Moneybag Solidus = Moneybag(0, 1, 0);
+constinit const Moneybag Denier = Moneybag(0, 0, 1);
 
 int main() {
     // Taka konstrukcja nie powinna się kompilować.
@@ -310,7 +262,6 @@ int main() {
     Moneybag m4(m1);
     m4 = m3;
 
-
     std::cout << m3 << std::endl;
     std::cout << m4 + m2 - Solidus << std::endl;
 
@@ -320,7 +271,6 @@ int main() {
     assert(m1);
     assert(!m3);
     assert(m1 >= m2);
-    return 0;
     assert(m1 > m2);
     assert(!(m1 < m2));
     assert(m4 == m3);
@@ -329,7 +279,6 @@ int main() {
     assert(Moneybag(2, 2, 1) > Moneybag(2, 1, 1));
     assert(!(Moneybag(1, 2, 2) <= Moneybag(2, 2, 1)));
     assert(!(Moneybag(1, 2, 2) < Moneybag(2, 2, 1)));
-
 
     m2 += 28 * Solidus + 2 * Denier;
 
@@ -345,28 +294,24 @@ int main() {
 
     Value v1 = Value(m1);
     Value v2(m2);
-    Value v3(10);
 
-    Value v4 = v1;
-    v2 = v3;
+    std::cout << static_cast<std::string>(v1) << std::endl;
+    std::cout << std::string(Value(Livre)) << std::endl;
 
-    //std::cout << (st)
-    //std::cout << static_cast<std::string>(v1) << std::endl;
-    //cout << string(Value(Livre)) << endl;
-
-    //assert(v1 == v2);
-    //assert(!is_neq(v1 <=> v2));
-    //assert(v1 == 379);
-    //assert(379 == v2);
-    //assert(v1 > 350);
-    //assert(350 < v2);
-    //assert(0 == Value());
+    assert(v1 == v2);
+    assert(!is_neq(v1 <=> v2));
+    assert(v1 == 379);
+    assert(379 == v2);
+    assert(v1 > 350);
+    assert(350 < v2);
+    assert(0 == Value());
 
     // Te konstrukcje nie powinny się kompilować.
-    // Livre = Denier;
-    // Denier = Solidus;
-    // Solidus = Livre;
-    // int k = Moneybag(1, 2, 3);
+    //Livre = Denier;
+    //Denier = Solidus;
+    //Solidus = Livre;
+    //int k = Moneybag(1, 2, 3);
+    //std::cout << k << "\n";
 
     return 0;
 }
