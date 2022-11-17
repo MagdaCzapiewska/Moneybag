@@ -34,6 +34,8 @@ public:
 
     Moneybag(const Moneybag& moneybag);
 
+    Moneybag& operator=(const Moneybag &rhs);
+
     //tworzenie sakiewki przez skopiowanie innej sakiewki;
 
     // Odczytanie liczby poszczególnych monet za pomocą odpowiednio metod
@@ -96,22 +98,61 @@ public:
     operator bool() const;
 };
 
-
+// *
+const Moneybag operator*(const int lhs, const Moneybag &rhs);
 
 class Value {
 
+private:
+
+    __int128 val;
+
     //utworzenie wartości na podstawie sakiewki lub liczby całkowitej
     //nieujemnej;
+public:
+    Value(const Moneybag& moneybag);
+
+    Value(Moneybag::coin_number_t val);
+
+    Value();
+
+    Value(const Value& value);
+
+    Value& operator=(const Value &rhs);
+
+    __int128 get_value() const;
 
     //kopiowanie wartości;
 
     //porównywanie wartości – na wartościach zdefiniowany jest naturalny
     //porządek liniowy;
 
+    // ==
+    bool operator==(const Value &rhs) const;
+
+    // !=
+    bool operator!=(const Value &rhs) const;
+
+    // <
+    bool operator<(const Value &rhs) const;
+
+    // <=
+    bool operator<=(const Value &rhs) const;
+
+    // >
+    bool operator>(const Value &rhs) const;
+
+    // >=
+    bool operator>=(const Value &rhs) const;
+
+    // <=>
+    std::strong_ordering operator<=>(const Value &rhs);
+
     //porównywanie wartości z liczbami całkowitymi nieujemnymi;
 
     //rzutowanie wartości na obiekt klasy string reprezentujący wartość
     //w zapisie dziesiętnym.
+    operator std::string() const;
 };
 
 #endif // __MONEYBAG_H__
