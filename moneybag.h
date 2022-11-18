@@ -56,7 +56,7 @@ public:
 };
 
 
-const Moneybag operator*(const int lhs, const Moneybag &rhs);
+const Moneybag operator*(Moneybag::coin_number_t lhs, const Moneybag &rhs);
 
 class Value {
 

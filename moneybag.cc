@@ -175,7 +175,7 @@ const Moneybag Moneybag::operator*(coin_number_t rhs) const {
     return result;
 }
 
-const Moneybag operator*(const int lhs, const Moneybag &rhs) {
+const Moneybag operator*(Moneybag::coin_number_t lhs, const Moneybag &rhs) {
     Moneybag result = rhs;
     result *= lhs;
     return result;
@@ -248,3 +248,61 @@ std::strong_ordering Value::operator<=>(const uint64_t rhs) const {
 constinit const Moneybag Livre = Moneybag(1, 0, 0);
 constinit const Moneybag Solidus = Moneybag(0, 1, 0);
 constinit const Moneybag Denier = Moneybag(0, 0, 1);
+
+int main() {
+    // Taka konstrukcja nie powinna się kompilować.
+    // Moneybag m0;
+
+    Moneybag m1 = Moneybag(1, 10, 19);
+    Moneybag m2 = 2 * Solidus + 17 * Denier;
+    Moneybag m3(0, 0, 0);
+    Moneybag m4(m1);
+    m4 = m3;
+
+    std::cout << m3 << std::endl;
+    std::cout << m4 + m2 - Solidus << std::endl;
+
+    Moneybag::coin_number_t s = m2.solidus_number();
+    assert(s == 2);
+
+    assert(m1);
+    assert(!m3);
+    assert(m1 >= m2);
+    assert(m1 > m2);
+    assert(!(m1 < m2));
+    assert(m4 == m3);
+
+    assert(Moneybag(2, 2, 1) >= Moneybag(2, 1, 1));
+    assert(Moneybag(2, 2, 1) > Moneybag(2, 1, 1));
+    assert(!(Moneybag(1, 2, 2) <= Moneybag(2, 2, 1)));
+    assert(!(Moneybag(1, 2, 2) < Moneybag(2, 2, 1)));
+
+    m2 += 28 * Solidus + 2 * Denier;
+
+    std::cout << m1 << std::endl;
+    std::cout << m2 << std::endl;
+
+    assert(!(m1 == m2));
+    assert(!(m1 > m2));
+    assert(!(m1 < m2));
+
+    Value v1 = Value(m1);
+    Value v2(m2);
+
+    std::cout << static_cast<std::string>(v1) << std::endl;
+    std::cout << std::string(Value(Livre)) << std::endl;
+
+    assert(v1 == v2);
+    assert(!is_neq(v1 <=> v2));
+    assert(v1 == 379);
+    assert(379 == v2);
+    assert(v1 > 350);
+    assert(350 < v2);
+    assert(0 == Value());
+
+    // Te konstrukcje nie powinny się kompilować.
+    // Livre = Denier;
+    // Denier = Solidus;
+    // Solidus = Livre;
+    // int k = Moneybag(1, 2, 3);
+}
