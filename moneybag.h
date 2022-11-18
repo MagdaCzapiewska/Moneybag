@@ -1,14 +1,9 @@
 #ifndef __MONEYBAG_H__
 #define __MONEYBAG_H__
 
-#include <initializer_list>
 #include <cstdint>
 #include <sstream>
 #include <compare>
-
-constexpr uint64_t denier_denier = 1;
-constexpr uint64_t solid_denier = 12;
-constexpr uint64_t livre_denier = 240;
 
 class Moneybag {
 
