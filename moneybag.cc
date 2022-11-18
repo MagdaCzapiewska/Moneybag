@@ -258,6 +258,7 @@ int main() {
     Moneybag m3(0, 0, 0);
     Moneybag m4(m1);
     m4 = m3;
+    Moneybag m5 = 18000000000000000000 * Solidus;
 
     std::cout << m3 << std::endl;
     std::cout << m4 + m2 - Solidus << std::endl;
